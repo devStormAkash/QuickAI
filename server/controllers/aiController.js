@@ -3,13 +3,13 @@ import sql from "../configs/db.js";
 import { clerkClient } from "@clerk/express";
 import axios from "axios";
 import { v2 as cloudinary } from "cloudinary";
-// import fs from 'fs'
+import fs from 'fs'
 // // import pdf from 'pdf-parse/lib/pdf-parse.js';
 // import { createRequire } from "module";
 
 // const require = createRequire(import.meta.url);
 // const pdf = require("pdf-parse");
-
+import pdf from "pdf-parse-fork";
 
 const AI = new OpenAI({
   apiKey: process.env.GEMINI_API_KEY,
@@ -297,7 +297,7 @@ export const reviewResume = async (req, res) => {
         },
       ],
       temperature: 0.7,
-      max_tokens: 1500,
+      max_tokens: 1600,
     });
 
     const content = response.choices[0].message.content;

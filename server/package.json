@@ -21,7 +21,7 @@
     "express": "^5.1.0",
     "multer": "^2.0.2",
     "openai": "^6.2.0",
-    "pdf-parse": "^2.2.2",
+    "pdf-parse-fork": "^1.2.0",
     "pdf-parser": "^1.0.5",
     "react-hot-toast": "^2.6.0"
   },
