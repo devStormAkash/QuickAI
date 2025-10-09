@@ -124,7 +124,7 @@ const Footer = () => {
         <p className="flex flex-col sm:flex-row items-center justify-center sm:justify-between text-center text-sm flex-wrap px-2">
           © {new Date().getFullYear()}{" "}
           <a
-            href="https://prebuiltui.com"
+            href="/"
             className="mx-1 font-semibold text-blue-600 hover:underline"
           >
             QuickAi

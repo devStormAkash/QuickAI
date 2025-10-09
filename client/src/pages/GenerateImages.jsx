@@ -106,7 +106,9 @@ const GenerateImages = () => {
             </div>
             <button
               disabled={loading}
-              className="cursor-pointer flex justify-center gap-3.5 rounded-md px-6 py-3 w-full bg-linear-to-r from-green-700 to-green-400"
+              className={`cursor-pointer flex hover:scale-102 transition-all duration-300  ${
+                loading && "opacity-50 cursor-not-allowed"
+              } justify-center gap-3.5 rounded-md px-6 py-3 w-full bg-linear-to-r from-green-700 to-green-400`}
             >
               {loading ? (
                 <div className="size-6 rounded-full border-2 border-t-transparent border-white animate-spin"></div>
@@ -137,13 +139,15 @@ const GenerateImages = () => {
               </div>
             )}
 
-            {
-              content && (
-                <div className="w-full h-full">
-                  <img src={content} alt="processed_image" className="rounded-lg"/>
-                </div>
-              )
-            }
+            {content && (
+              <div className="w-full h-full">
+                <img
+                  src={content}
+                  alt="processed_image"
+                  className="rounded-lg"
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

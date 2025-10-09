@@ -88,7 +88,12 @@ const WriteArticle = () => {
                 ))}
               </div>
             </div>
-            <button disabled={loading} className="cursor-pointer flex justify-center gap-3.5 rounded-md px-3 py-3 w-full bg-linear-to-r from-[#164c99] to-[#0BB0D7]">
+            <button
+              disabled={loading}
+              className={`cursor-pointer hover:scale-102 transition-all duration-300 flex justify-center gap-3.5 rounded-md px-3 py-3 w-full bg-linear-to-r from-[#164c99] to-[#0BB0D7] ${
+                loading && "opacity-50 cursor-not-allowed"
+              } items-center`}
+            >
               {loading ? (
                 <div className="size-6 rounded-full border-2 border-t-transparent border-white animate-spin"></div>
               ) : (

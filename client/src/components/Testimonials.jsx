@@ -7,7 +7,7 @@ const Testimonials = () => {
         <h1 className="sm:text-5xl text-gray-700 font-semibold text-3xl">
           Loved By Creators
         </h1>
-        <p className="text-center text-gray-500 mt-5">
+        <p className="text-center text-gray-500 mt-5 mx-3">
           Don't just take our word for it. Here's what our user is saying.
         </p>
       </div>
