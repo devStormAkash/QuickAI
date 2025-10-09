@@ -61,5 +61,5 @@ Want to run QuickAI locally? Follow these simple steps.
 
 ### 1. Clone the Repository
 ```bash
-git clone [https://github.com/your-username/quickai.git](https://github.com/your-username/quickai.git)
+git clone https://github.com/devStormAkash/QuickAI.git
 cd quickai
