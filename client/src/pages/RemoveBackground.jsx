@@ -1,8 +1,9 @@
-import { Edit, Eraser, FileEditIcon, Image, Sparkles, SquarePen } from "lucide-react";
+import { Download, DownloadIcon, Edit, Eraser, FileEditIcon, Image, Sparkles, SquarePen } from "lucide-react";
 import React, { useState } from "react";
 import axios from "axios";
 import { useAuth } from "@clerk/clerk-react";
 import toast from "react-hot-toast";
+import { DownloadButton } from "../components/DownloadButton";
 
 axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
 
@@ -74,7 +75,9 @@ const RemoveBackground = () => {
 
             <button
               disabled={loading}
-              className={`cursor-pointer flex justify-center gap-3.5 rounded-md px-6 py-3 w-full bg-linear-to-r from-orange-400 to-orange-700 hover:scale-102 transition-all duration-300 ${loading && "opacity-50 cursor-not-allowed"} items-center`}
+              className={`cursor-pointer flex justify-center gap-3.5 rounded-md px-6 py-3 w-full bg-linear-to-r from-orange-400 to-orange-700 hover:scale-102 transition-all duration-300 ${
+                loading && "opacity-50 cursor-not-allowed"
+              } items-center`}
             >
               {loading ? (
                 <div className="size-6 rounded-full border-2 border-t-transparent border-white animate-spin"></div>
@@ -88,7 +91,7 @@ const RemoveBackground = () => {
         </div>
 
         {/* Right part of the page */}
-        <div className="md:w-7/12 px-10 py-4  rounded-lg border border-gray-300 bg-zinc-50 min-h-80 max-h-[31.5rem]">
+        <div className="md:w-7/12 px-10 py-4 relative  rounded-lg border border-gray-300 bg-zinc-50 min-h-80 max-h-[31.5rem]">
           <div className="flex justify-start items-center gap-3">
             <Eraser className="text-orange-500 size-8" />
             <h1 className="text-xl font-semibold text-gray-600">
@@ -104,13 +107,20 @@ const RemoveBackground = () => {
                 </p>
               </div>
             )}
-            {
-              content && (
+            {content && (
+              <>
                 <div className="w-full h-full">
-                  <img src={content} alt="removed_background" className="rounded-lg"/>
+                  <img
+                    src={content}
+                    alt="removed_background"
+                    className="rounded-lg"
+                  />
                 </div>
-              )
-            }
+                <div className="absolute bottom-4 right-4 p-3 hover:cursor-pointer  rounded-lg bg-gray-300 border text-gray-600 border-gray-400">
+                  <DownloadButton url={content} filename="myImage.jpg" />
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>

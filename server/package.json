@@ -19,10 +19,12 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "markdown-it": "^14.1.0",
     "multer": "^2.0.2",
     "openai": "^6.2.0",
     "pdf-parse-fork": "^1.2.0",
     "pdf-parser": "^1.0.5",
+    "puppeteer": "^24.24.0",
     "react-hot-toast": "^2.6.0"
   },
   "devDependencies": {

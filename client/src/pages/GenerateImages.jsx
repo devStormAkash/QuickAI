@@ -1,8 +1,9 @@
-import { Edit, FileEditIcon, Image, Sparkles, SquarePen } from "lucide-react";
+import { Download, Edit, FileEditIcon, Image, Sparkles, SquarePen } from "lucide-react";
 import React, { useState } from "react";
 import axios from "axios";
 import { useAuth } from "@clerk/clerk-react";
 import toast from "react-hot-toast";
+import { DownloadButton } from "../components/DownloadButton";
 
 axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
 
@@ -122,7 +123,7 @@ const GenerateImages = () => {
         </div>
 
         {/* Right part of the page */}
-        <div className="md:w-7/12 px-10 py-4  rounded-lg border border-gray-300 bg-zinc-50 min-h-80 max-h-[31.5rem]">
+        <div className="md:w-7/12 px-10 py-4 relative  rounded-lg border border-gray-300 bg-zinc-50 min-h-80 max-h-[31.5rem]">
           <div className="flex justify-start items-center gap-3">
             <Image className="text-green-500 size-8" />
             <h1 className="text-xl font-semibold text-gray-600">
@@ -140,13 +141,18 @@ const GenerateImages = () => {
             )}
 
             {content && (
-              <div className="w-full h-full">
-                <img
-                  src={content}
-                  alt="processed_image"
-                  className="rounded-lg"
-                />
-              </div>
+              <>
+                <div className="w-full h-full">
+                  <img
+                    src={content}
+                    alt="processed_image"
+                    className="rounded-lg"
+                  />
+                </div>
+                <div className="absolute bottom-3 right-3 p-3 hover:cursor-pointer  rounded-lg bg-gray-300 border text-gray-600 border-gray-400">
+                  <DownloadButton url={content} filename="myImage.jpg" />
+                </div>
+              </>
             )}
           </div>
         </div>
