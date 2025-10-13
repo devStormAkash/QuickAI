@@ -184,7 +184,7 @@ export const removeBackground = async (req, res) => {
     if (plan !== "premium") {
       return res.json({
         success: false,
-        message: "Image generation is only available for premium users.",
+        message: "Background removal is only available for premium users.",
       });
     }
 
@@ -234,7 +234,7 @@ export const removeObject = async (req, res) => {
     if (plan !== "premium") {
       return res.json({
         success: false,
-        message: "Image generation is only available for premium users.",
+        message: "Object Removal is only available for premium users.",
       });
     }
 
@@ -278,7 +278,7 @@ export const reviewResume = async (req, res) => {
     if (plan !== "premium") {
       return res.json({
         success: false,
-        message: "Image generation is only available for premium users.",
+        message: "Resume review is only available for premium users.",
       });
     }
 

@@ -107,7 +107,9 @@ export const generatePDF = async (req, res) => {
             }
           </style>
         </head>
-        <body>${htmlContent}</body>
+        <body>${htmlContent}
+              <p style="text-align: right; font-size: 10px ; margin-top: 10px ; texcolor: #00524b">---QuickAI Creations---</p>
+        </body>
       </html>
     `;
 
