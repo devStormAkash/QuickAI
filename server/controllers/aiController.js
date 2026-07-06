@@ -16,6 +16,7 @@ const AI = new OpenAI({
   baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/",
 });
 
+
 export const generateArticle = async (req, res) => {
   try {
     const { userId } = req.auth();
@@ -23,7 +24,13 @@ export const generateArticle = async (req, res) => {
     const free_usage = req.free_usage;
     const { prompt, length } = req.body;
 
-    // Added return statement to stop execution
+    if (!prompt) {
+      return res.status(400).json({
+        success: false,
+        message: "Prompt is required.",
+      });
+    }
+
     if (plan !== "premium" && free_usage >= 10) {
       return res.json({
         success: false,
@@ -31,21 +38,46 @@ export const generateArticle = async (req, res) => {
       });
     }
 
+    const finalPrompt = `
+Write a high-quality, detailed article on the following topic.
+
+Topic: ${prompt}
+
+Requirements:
+- Approximately ${length || 1000} words.
+- Well-structured.
+- Use proper headings and subheadings.
+- Write in clear, professional English.
+- Include an introduction.
+- Explain every important concept in detail.
+- Include examples wherever appropriate.
+- End with a conclusion.
+- Output only the article.
+`;
+
     const response = await AI.chat.completions.create({
-      model: "gemini-2.0-flash",
+      model: "gemini-2.5-flash",
       messages: [
         {
+          role: "system",
+          content:
+            "You are a professional content writer who writes detailed, informative, well-formatted articles.",
+        },
+        {
           role: "user",
-          content: prompt,
-        }
+          content: finalPrompt,
+        },
       ],
       temperature: 0.7,
-      max_tokens: length,
+      max_completion_tokens: 4096,
     });
 
     const content = response.choices[0].message.content;
 
-    await sql` INSERT INTO creations(user_id, prompt, content, type) VALUES(${userId}, ${prompt}, ${content}, 'article')`;
+    await sql`
+      INSERT INTO creations(user_id, prompt, content, type)
+      VALUES(${userId}, ${prompt}, ${content}, 'article')
+    `;
 
     if (plan !== "premium") {
       await clerkClient.users.updateUserMetadata(userId, {
@@ -55,14 +87,68 @@ export const generateArticle = async (req, res) => {
       });
     }
 
-    res.json({ success: true, content });
+    res.json({
+      success: true,
+      content,
+    });
   } catch (error) {
     console.error("Error in generateArticle:", error);
-    res.status(500).json({ success: false, message: error.message });
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
 
+
+
+// export const generateBlogTitle = async (req, res) => {
+//   try {
+//     const { userId } = req.auth();
+//     const plan = req.plan;
+//     const free_usage = req.free_usage;
+//     const { prompt} = req.body;
+
+//     // Added return statement to stop execution
+//     if (plan !== "premium" && free_usage >= 10) {
+//       return res.json({
+//         success: false,
+//         message: "Limit reached. Please Upgrade to Premium.",
+//       });
+//     }
+
+//     const response = await AI.chat.completions.create({
+//       model: "gemini-2.5-flash",
+//       messages: [
+//         {
+//           role: "user",
+//           content: prompt
+//         },
+//       ],
+//       temperature: 0.7,
+//       max_tokens: 150,
+//     });
+
+//     const content = response.choices[0].message.content;
+
+//     await sql` INSERT INTO creations(user_id, prompt, content, type) VALUES(${userId}, ${prompt}, ${content}, 'blog-title')`;
+
+//     if (plan !== "premium") {
+//       await clerkClient.users.updateUserMetadata(userId, {
+//         privateMetadata: {
+//           free_usage: free_usage + 1,
+//         },
+//       });
+//     }
+
+//     res.json({ success: true, content });
+//   } catch (error) {
+//     console.error("Error in generateBlogTitle:", error);
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
 
 
 
@@ -72,9 +158,15 @@ export const generateBlogTitle = async (req, res) => {
     const { userId } = req.auth();
     const plan = req.plan;
     const free_usage = req.free_usage;
-    const { prompt} = req.body;
+    const { prompt } = req.body;
 
-    // Added return statement to stop execution
+    if (!prompt) {
+      return res.status(400).json({
+        success: false,
+        message: "Prompt is required.",
+      });
+    }
+
     if (plan !== "premium" && free_usage >= 10) {
       return res.json({
         success: false,
@@ -82,21 +174,42 @@ export const generateBlogTitle = async (req, res) => {
       });
     }
 
+    const finalPrompt = `
+Generate 10 unique, catchy, SEO-friendly blog titles.
+
+Topic: ${prompt}
+
+Requirements:
+- Generate exactly 10 titles.
+- Make them engaging and clickable.
+- Each title should be unique.
+- Number the titles.
+- Do not include any explanation.
+`;
+
     const response = await AI.chat.completions.create({
-      model: "gemini-2.0-flash",
+      model: "gemini-2.5-flash",
       messages: [
         {
+          role: "system",
+          content:
+            "You are an expert SEO content writer.",
+        },
+        {
           role: "user",
-          content: prompt
+          content: finalPrompt,
         },
       ],
-      temperature: 0.7,
-      max_tokens: 150,
-    });
-
+      temperature: 0.9,
+      max_completion_tokens: 1000,
+      });
+    // console.log(response.choices)
     const content = response.choices[0].message.content;
 
-    await sql` INSERT INTO creations(user_id, prompt, content, type) VALUES(${userId}, ${prompt}, ${content}, 'blog-title')`;
+    await sql`
+      INSERT INTO creations(user_id, prompt, content, type)
+      VALUES(${userId}, ${prompt}, ${content}, 'blog-title')
+    `;
 
     if (plan !== "premium") {
       await clerkClient.users.updateUserMetadata(userId, {
@@ -106,16 +219,19 @@ export const generateBlogTitle = async (req, res) => {
       });
     }
 
-    res.json({ success: true, content });
+    res.json({
+      success: true,
+      content,
+    });
   } catch (error) {
     console.error("Error in generateBlogTitle:", error);
-    res.status(500).json({ success: false, message: error.message });
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
-
-
-
-
 
 
 
@@ -268,13 +384,57 @@ export const removeObject = async (req, res) => {
 
 
 
+// export const reviewResume = async (req, res) => {
+//   try {
+//     const { userId } = req.auth();
+//     const plan = req.plan;
+//     const resume = req.file;
+
+//     // Added return statement to stop execution
+//     if (plan !== "premium") {
+//       return res.json({
+//         success: false,
+//         message: "Resume review is only available for premium users.",
+//       });
+//     }
+
+//     if (resume.size > 5 * 1024 * 1024) return res.json({ success: false, message: "File size must be less that 5 MB" })
+    
+//     const databuffer = fs.readFileSync(resume.path)
+//     const pdfData = await pdf(databuffer)
+//     const prompt = `Review the following resume and provide the constructive on its strength , weakness and areas for improvement. Resume content:\n\n${pdfData.text}`
+
+//     const response = await AI.chat.completions.create({
+//       model: "gemini-2.5-flash",
+//       messages: [
+//         {
+//           role: "user",
+//           content: prompt,
+//         },
+//       ],
+//       temperature: 0.7,
+//       max_tokens: 1600,
+//     });
+
+//     const content = response.choices[0].message.content;
+
+//     await sql` INSERT INTO creations(user_id, prompt, content, type) VALUES(${userId}, 'Review the uploaded resume', ${content}, 'resume-review')`;
+   
+
+//     res.json({ success: true, content: content });
+//   } catch (error) {
+//     console.error("Error in reviewResume:", error);
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+
 export const reviewResume = async (req, res) => {
   try {
     const { userId } = req.auth();
     const plan = req.plan;
     const resume = req.file;
 
-    // Added return statement to stop execution
     if (plan !== "premium") {
       return res.json({
         success: false,
@@ -282,32 +442,98 @@ export const reviewResume = async (req, res) => {
       });
     }
 
-    if (resume.size > 5 * 1024 * 1024) return res.json({ success: false, message: "File size must be less that 5 MB" })
-    
-    const databuffer = fs.readFileSync(resume.path)
-    const pdfData = await pdf(databuffer)
-    const prompt = `Review the following resume and provide the constructive on its strength , weakness and areas for improvement. Resume content:\n\n${pdfData.text}`
+    if (!resume) {
+      return res.status(400).json({
+        success: false,
+        message: "Please upload a resume.",
+      });
+    }
+
+    if (resume.size > 5 * 1024 * 1024) {
+      return res.json({
+        success: false,
+        message: "File size must be less than 5 MB.",
+      });
+    }
+
+    const dataBuffer = fs.readFileSync(resume.path);
+    const pdfData = await pdf(dataBuffer);
+
+    const finalPrompt = `
+Review the following resume as an experienced HR manager and career coach.
+
+Resume:
+
+${pdfData.text}
+
+Provide your review in the following format:
+
+# Overall Rating (out of 10)
+
+# Summary
+
+# Strengths
+- Bullet points
+
+# Weaknesses
+- Bullet points
+
+# Missing Skills
+- Bullet points
+
+# ATS (Applicant Tracking System) Score
+Give a score out of 100 and explain why.
+
+# Formatting Feedback
+
+# Grammar & Language Suggestions
+
+# Actionable Improvements
+Give at least 10 practical suggestions.
+
+# Final Verdict
+Should this resume be submitted as it is? Explain.
+`;
 
     const response = await AI.chat.completions.create({
-      model: "gemini-2.0-flash",
+      model: "gemini-2.5-flash",
       messages: [
         {
+          role: "system",
+          content:
+            "You are a senior HR recruiter with over 15 years of experience reviewing resumes. Give detailed, professional, honest, and actionable feedback.",
+        },
+        {
           role: "user",
-          content: prompt,
+          content: finalPrompt,
         },
       ],
-      temperature: 0.7,
-      max_tokens: 1600,
+      temperature: 0.4,
+      max_completion_tokens: 3000,
     });
 
     const content = response.choices[0].message.content;
 
-    await sql` INSERT INTO creations(user_id, prompt, content, type) VALUES(${userId}, 'Review the uploaded resume', ${content}, 'resume-review')`;
-   
+    await sql`
+      INSERT INTO creations(user_id, prompt, content, type)
+      VALUES(
+        ${userId},
+        'Review the uploaded resume',
+        ${content},
+        'resume-review'
+      )
+    `;
 
-    res.json({ success: true, content: content });
+    res.json({
+      success: true,
+      content,
+    });
   } catch (error) {
     console.error("Error in reviewResume:", error);
-    res.status(500).json({ success: false, message: error.message });
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
